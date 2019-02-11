@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">notebook</string>
+    <string name="glycemia">glycemia</string>
+    <string name="insulin">insulin</string>
 </resources>

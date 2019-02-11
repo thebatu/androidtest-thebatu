@@ -3,13 +3,15 @@ package com.notebook.mirambeaucare.notebook.database;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.util.Log;
 
 /**
  * application database
  */
-@Database(entities = {Glycemia.class}, version = 1)
+@Database(entities = {Glycemia.class}, version = 2)
+@TypeConverters({DateConverter.class})
 public abstract class NotebookDatabase extends RoomDatabase {
 
     private static final String LOG_TAG = NotebookDatabase.class.getSimpleName();
@@ -19,7 +21,7 @@ public abstract class NotebookDatabase extends RoomDatabase {
     private static final Object LOCK = new Object();
     private static NotebookDatabase sInstance;
 
-    public static NotebookDatabase getsInstance(Context context){
+    public static NotebookDatabase getInstance(Context context){
         Log.d(LOG_TAG, "Getting notebookDB");
         if (sInstance == null){
             synchronized (LOCK){
