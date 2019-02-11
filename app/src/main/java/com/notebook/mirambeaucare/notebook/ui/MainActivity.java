@@ -18,14 +18,18 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 
 import com.notebook.mirambeaucare.notebook.R;
+import com.notebook.mirambeaucare.notebook.database.Glycemia;
 import com.notebook.mirambeaucare.notebook.ui.timeDate.DatePickerFragment;
 import com.notebook.mirambeaucare.notebook.ui.timeDate.TimePickerFragment;
 import com.notebook.mirambeaucare.notebook.util.Constants;
+import com.notebook.mirambeaucare.notebook.util.InjectorUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -57,6 +61,8 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
     // will be populated with user inputs
     private String glycemia_;
     private String insulin_;
+    Date current_date;
+    String formattedTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +77,13 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
         mRecyclerView.setAdapter(mNotesAdapter);
 
         //get ViewModel of mainActivity
-        mNotesViewModel = ViewModelProviders.of(this).get(NotesViewModel.class);
-        mNotesViewModel.getAllRecords();
+        NotesViewModelFactory factory = InjectorUtils.provideNotesViewModelFactory
+                (this.getApplicationContext());
+        mNotesViewModel = ViewModelProviders.of(this, factory).get(NotesViewModel.class);
 
+
+
+        // fab click listener (add new entry)
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,7 +113,6 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
 
         String formatted_date_str = sdfDate.format(c.getTime());
 
-        Date current_date;
         SimpleDateFormat format = new SimpleDateFormat(Constants.date_format, Locale.getDefault());
         try {
              current_date = format.parse(formatted_date_str);
@@ -120,7 +129,6 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
 
 
 //        Glycemia glycemia = new Glycemia(DateConverter.toDate(Long.valueOf(dateString)),1);
@@ -176,7 +184,7 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
     }
 
     /**
-     * Callback for timeDialog.
+     * Callback for timeDialog. will be called upon user selecting time.
      * @param view timeView
      * @param hourOfDay selected hourOfDay by user
      * @param minute selected minute by user
@@ -184,8 +192,6 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         view.setIs24HourView(true);
-        hourFinal = hourOfDay;
-        minuteFinal = minute;
 
         //parse time and format it to readable format
         String time = hourOfDay + ":" + minute;
@@ -198,10 +204,17 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
         }
 
         SimpleDateFormat fmtOut = new SimpleDateFormat("hh:mm aa", Locale.getDefault());
-        String formattedTime = fmtOut.format(date);
+        formattedTime = fmtOut.format(date);
 
-        Log.d("TIME", formattedTime.toString());
+        Log.d("TIME", formattedTime);
 
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                sendDataToViewModel();
+            }
+        });
     }
 
     /**
@@ -214,10 +227,29 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
     }
 
     /**
-     * send date, time, glycemia, and insulin levels to be saved in DB
+     * send date/time, glycemia, and insulin to DB handlers for insertion
      */
     private void sendDataToViewModel(){
+        mNotesViewModel.prepareInsertGlycemia(glycemia_,
+        insulin_,
+        current_date,
+        formattedTime);
 
+
+
+        new Handler().postDelayed (() -> {
+            //your code here
+        }, 1000);
+
+
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<List<Glycemia>> gg = new ArrayList<List<Glycemia>>();
+                gg =  mNotesViewModel.getAllRecords();
+            }
+        });
 
 
     }

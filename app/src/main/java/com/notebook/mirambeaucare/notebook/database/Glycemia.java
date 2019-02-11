@@ -19,20 +19,25 @@ public class Glycemia {
     @NonNull
     private Date date;
     private float insulin;
+    private float glycemia;
+
 
 
     //constructor used by room data persistence
-    public Glycemia(int id, Date date, float insulin) {
+    public Glycemia(int id, Date date, float insulin, float glycemia) {
         this.id = id;
         this.date = date;
         this.insulin = insulin;
+        this.glycemia = glycemia;
+
     }
 
 
     @Ignore
-    public Glycemia(Date date, float insulin) {
+    public Glycemia(Date date, float insulin, float glycemia) {
         this.date = date;
         this.insulin = insulin;
+        this.glycemia = glycemia;
     }
 
     @Ignore
@@ -52,4 +57,8 @@ public class Glycemia {
     public float getInsulin() {return insulin;}
 
     public void setInsulin(float insulin) {this.insulin = insulin;}
+
+    public float getGlycemia() {return glycemia; }
+
+    public void setGlycemia(float glycemia) {this.glycemia = glycemia;}
 }

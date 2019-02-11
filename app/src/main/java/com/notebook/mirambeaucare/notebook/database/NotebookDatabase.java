@@ -13,8 +13,8 @@ import android.util.Log;
 @Database(entities = {Glycemia.class}, version = 2)
 @TypeConverters({DateConverter.class})
 public abstract class NotebookDatabase extends RoomDatabase {
-
     private static final String LOG_TAG = NotebookDatabase.class.getSimpleName();
+
     private static final String DATABASE_NAME = "notebookDB";
 
     //Singleton instantiation
