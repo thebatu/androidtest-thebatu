@@ -24,7 +24,36 @@ public class NotesViewModel extends ViewModel {
     }
 
     /**
+     * create Glycemia object, forward the object for DB insertion
+     *
+     * @param glycemia_     glycemia_
+     * @param insulin_      insulin_
+     * @param current_date  current_date
+     * @param formattedTime formattedTime
+     */
+    public void prepareInsertGlycemia(String glycemia_, String insulin_, Date current_date,
+                                      String formattedTime, boolean isUpdate, int recordID) {
+        if (insulin_.isEmpty()) {
+            insulin_ = "0";
+        }
+        Glycemia glycemia = new Glycemia(current_date, Float.parseFloat(insulin_),
+                Float.parseFloat(glycemia_));
+        glycemia.setId(recordID);
+
+        if (!isUpdate && recordID != 999) {
+            insetRecord(glycemia);
+        }else {
+            updateRecord(glycemia);
+        }
+    }
+
+    private void updateRecord(Glycemia glycemia) {
+        mNotebookRepository.update(glycemia);
+    }
+
+    /**
      * insert a glycemia to local DB
+     *
      * @param glycemia glycemia
      */
     private void insetRecord(Glycemia glycemia) {
@@ -33,31 +62,16 @@ public class NotesViewModel extends ViewModel {
 
 
     /**
-     * create Glycemia object, forward the object for DB insertion
-     *
-     * @param glycemia_
-     * @param insulin_
-     * @param current_date
-     * @param formattedTime
-     */
-    public void prepareInsertGlycemia(String glycemia_, String insulin_, Date current_date, String formattedTime) {
-        if (insulin_.isEmpty()){
-            insulin_ = "0";
-        }
-        Glycemia glycemia = new Glycemia(current_date, Float.parseFloat(insulin_), Float.parseFloat(glycemia_));
-        insetRecord(glycemia);
-    }
-
-    /**
      * @return all records of glycemia
      */
-    public LiveData<List<Glycemia>> getAllRecords(){
-       return  mNotebookRepository.getAllRecord();
+    public LiveData<List<Glycemia>> getAllRecords() {
+        return mNotebookRepository.getAllRecord();
     }
 
 
     /**
      * delete a record from local DB
+     *
      * @param glycemiaAt
      */
     public void delete(Glycemia glycemiaAt) {

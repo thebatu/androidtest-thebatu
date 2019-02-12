@@ -62,4 +62,8 @@ public class NotebookRepository {
     public void delete(Glycemia glycemiaAt) {
         glycemiaDao.delete(glycemiaAt);
     }
+
+    public void update(Glycemia glycemia) {
+        glycemiaDao.update(glycemia);
+    }
 }

@@ -3,5 +3,6 @@
     <string name="glycemia">glycemia</string>
     <string name="insulin">insulin: </string>
     <string name="deleted">Item Removed </string>
+    <string name="undo">UNDO</string>
 
 </resources>
