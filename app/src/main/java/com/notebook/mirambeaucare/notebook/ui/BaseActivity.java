@@ -3,9 +3,7 @@ package com.notebook.mirambeaucare.notebook.ui;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ProgressBar;
-
 import com.notebook.mirambeaucare.notebook.R;
-
 import butterknife.BindView;
 
 public class BaseActivity extends AppCompatActivity {

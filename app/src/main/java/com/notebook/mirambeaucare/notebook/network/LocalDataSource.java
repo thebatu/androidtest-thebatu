@@ -34,10 +34,6 @@ public class LocalDataSource {
         return sInstance;
     }
 
-    //to fetch data from local DB
-    public void fetchLocalData(){
-
-    }
 
 
 

@@ -89,43 +89,13 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
             }
         });
 
+        //instantiate swipe helper
         ItemTouchHelper itemTouchHelper = new
                 ItemTouchHelper(new SwipeToDeleteCallback(mNotesAdapter, mNotesViewModel, this));
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
-//        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-//            @Override
-//            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-//                return false;
-//            }
-//
-//            @Override
-//            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-//                if (direction == ItemTouchHelper.LEFT) {
-//                    mNotesViewModel.delete(mNotesAdapter.getGlycemiaAt(viewHolder.getAdapterPosition()));
-//                    Snackbar mySnackbar = Snackbar.make(findViewById(R.id.main_activity),
-//                            R.string.deleted, Snackbar.LENGTH_SHORT);
-//                    mySnackbar.show();
-//                }
-//            }
-//
-//            @Override
-//            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-//                // view the background view
-//            }
-//        };
-//
-//// attaching the touch helper to recycler view
-//        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
-
-
         // fab click listener (add new entry)
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAlertDialog();
-            }
-        });
+        fab.setOnClickListener(v -> showAlertDialog());
 
     }
 

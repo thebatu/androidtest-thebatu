@@ -14,6 +14,9 @@ import android.view.View;
 import com.notebook.mirambeaucare.notebook.R;
 import com.notebook.mirambeaucare.notebook.database.Glycemia;
 
+/**
+ * handle swipe actions.
+ */
 public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
 
     private NotesAdapter mAdapter;

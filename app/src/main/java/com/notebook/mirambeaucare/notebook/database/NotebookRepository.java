@@ -8,7 +8,7 @@ import com.notebook.mirambeaucare.notebook.util.AppExecutors;
 import java.util.List;
 
 /**
- * Application repository. servers as handler to database operations
+ * Application repository. serves as a handler to database operations
  */
 public class NotebookRepository {
 
