@@ -4,7 +4,6 @@ import android.util.Log;
 import com.notebook.mirambeaucare.notebook.network.LocalDataSource;
 import com.notebook.mirambeaucare.notebook.util.AppExecutors;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,10 +46,12 @@ public class NotebookRepository {
         glycemiaDao.insert(glycemia);
     }
 
-    public ArrayList<List<Glycemia>> getAllRecord(){
-        ArrayList<List<Glycemia>> glycemias = new ArrayList<>();
-        glycemias.add(glycemiaDao.getAllGlycemia());
-        return glycemias;
+    /**
+     * return all records
+     * @return list of all glycemia recordds
+     */
+    public List<Glycemia> getAllRecord(){
+        return glycemiaDao.getAllGlycemia();
     }
 
 }

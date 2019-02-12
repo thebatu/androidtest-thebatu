@@ -26,7 +26,6 @@ import com.notebook.mirambeaucare.notebook.util.InjectorUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -74,6 +73,7 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
+        mNotesAdapter = new NotesAdapter(this);
         mRecyclerView.setAdapter(mNotesAdapter);
 
         //get ViewModel of mainActivity
@@ -81,6 +81,13 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
                 (this.getApplicationContext());
         mNotesViewModel = ViewModelProviders.of(this, factory).get(NotesViewModel.class);
 
+        new Handler().postDelayed (() -> {
+            List<Glycemia> glycemias;
+            glycemias =  mNotesViewModel.getAllRecords();
+            if (glycemias != null){
+                mNotesAdapter.swapNotes(glycemias);
+            }
+        }, 100);
 
 
         // fab click listener (add new entry)
@@ -234,24 +241,6 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
         insulin_,
         current_date,
         formattedTime);
-
-
-
-        new Handler().postDelayed (() -> {
-            //your code here
-        }, 1000);
-
-
-        Handler handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                ArrayList<List<Glycemia>> gg = new ArrayList<List<Glycemia>>();
-                gg =  mNotesViewModel.getAllRecords();
-            }
-        });
-
-
     }
 
 

@@ -5,21 +5,27 @@ import android.arch.lifecycle.ViewModel;
 import com.notebook.mirambeaucare.notebook.database.Glycemia;
 import com.notebook.mirambeaucare.notebook.database.NotebookRepository;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * ViewModel class for notes. survives configuration changes.
+ * stores data for activity
+ */
 public class NotesViewModel extends ViewModel {
 
+    //app repository
     private NotebookRepository mNotebookRepository;
 
-    List<Glycemia> glycemias = new ArrayList<>();
-
+    //constructor
     public NotesViewModel(NotebookRepository mNotebookRepository) {
         this.mNotebookRepository = mNotebookRepository;
     }
 
-
+    /**
+     * insert a glycemia to local DB
+     * @param glycemia glycemia
+     */
     private void insetRecord(Glycemia glycemia) {
         mNotebookRepository.insert(glycemia);
     }
@@ -36,10 +42,12 @@ public class NotesViewModel extends ViewModel {
     public void prepareInsertGlycemia(String glycemia_, String insulin_, Date current_date, String formattedTime) {
         Glycemia glycemia = new Glycemia(current_date, Float.parseFloat(insulin_), Float.parseFloat(glycemia_));
         insetRecord(glycemia);
-
     }
 
-    public ArrayList<List<Glycemia>> getAllRecords(){
+    /**
+     * @return all records of glycemia
+     */
+    public List<Glycemia> getAllRecords(){
        return  mNotebookRepository.getAllRecord();
     }
 

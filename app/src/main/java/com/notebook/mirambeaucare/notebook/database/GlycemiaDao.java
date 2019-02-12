@@ -15,7 +15,7 @@ import java.util.List;
 @Dao
 public interface GlycemiaDao {
 
-    @Query("SELECT * FROM glycemia_table ORDER BY date DESC")
+    @Query("SELECT * FROM glycemia_table ")
     List<Glycemia> getAllGlycemia();
 
     @Insert
