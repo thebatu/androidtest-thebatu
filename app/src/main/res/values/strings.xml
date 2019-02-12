@@ -4,5 +4,7 @@
     <string name="insulin">insulin: </string>
     <string name="deleted">Item Removed </string>
     <string name="undo">UNDO</string>
+    <string name="update">Item Updated</string>
+    <string name="glycemia_">Glycemia:</string>
 
 </resources>

@@ -10,13 +10,20 @@ import android.widget.TextView;
 
 import com.notebook.mirambeaucare.notebook.R;
 import com.notebook.mirambeaucare.notebook.database.Glycemia;
+import com.notebook.mirambeaucare.notebook.util.Constants;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesAdapterViewHolder> {
 
     private List<Glycemia> mGlycemiasList;
     private Context mContext;
+    private String pattern = Constants.date_format_for_recyclerView;
+    private SimpleDateFormat simpleDateFormat =
+            new SimpleDateFormat(pattern, Locale.getDefault());
 
     public NotesAdapter(Context context) {
         this.mContext = context;
@@ -47,8 +54,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesAdapter
         Glycemia glycemia = mGlycemiasList.get(position);
         holder.glycemiaLvl.setText(String.valueOf(glycemia.getGlycemia()));
         holder.insulinLvl.setText(String.valueOf(glycemia.getInsulin()));
-
-        holder.date.setText(glycemia.getDate().toString());
+        holder.date.setText(simpleDateFormat.format(new Date(glycemia.getDate().toString())));
     }
 
     /**
@@ -78,7 +84,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesAdapter
     public Glycemia getGlycemiaAt(int position){
         return mGlycemiasList.get(position);
     }
-
 
     /**
      * A ViewHolder is a required part of the pattern for RecyclerViews. It mostly behaves as
