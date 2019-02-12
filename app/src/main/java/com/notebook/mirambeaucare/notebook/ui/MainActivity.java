@@ -2,15 +2,19 @@ package com.notebook.mirambeaucare.notebook.ui;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
@@ -35,8 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity implements DatePickerDialog.OnDateSetListener,
-        TimePickerDialog.OnTimeSetListener
-{
+        TimePickerDialog.OnTimeSetListener {
 
     //fab button
     @BindView(R.id.fab)
@@ -54,7 +57,7 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
 
     NotesViewModel mNotesViewModel;
 
-    private int day,month,year,hour, minute;
+    private int day, month, year, hour, minute;
     private int dayFinal, monthFinal, yearFinal, hourFinal, minuteFinal;
 
     // will be populated with user inputs
@@ -76,18 +79,73 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
         mNotesAdapter = new NotesAdapter(this);
         mRecyclerView.setAdapter(mNotesAdapter);
 
+
         //get ViewModel of mainActivity
         NotesViewModelFactory factory = InjectorUtils.provideNotesViewModelFactory
                 (this.getApplicationContext());
         mNotesViewModel = ViewModelProviders.of(this, factory).get(NotesViewModel.class);
 
-        new Handler().postDelayed (() -> {
-            List<Glycemia> glycemias;
-            glycemias =  mNotesViewModel.getAllRecords();
-            if (glycemias != null){
-                mNotesAdapter.swapNotes(glycemias);
+        //get list of all records and update the UI if there is change in the list
+        LiveData<List<Glycemia>> glycemias = mNotesViewModel.getAllRecords();
+        glycemias.observe(this, listOfGlycemia -> {
+            if (listOfGlycemia != null) {
+                mNotesAdapter.swapNotes(listOfGlycemia);
             }
-        }, 100);
+        });
+
+
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                if (direction == ItemTouchHelper.LEFT) {
+                    mNotesViewModel.delete(mNotesAdapter.getGlycemiaAt(viewHolder.getAdapterPosition()));
+                    Snackbar mySnackbar = Snackbar.make(findViewById(R.id.main_activity),
+                            R.string.deleted, Snackbar.LENGTH_SHORT);
+                    mySnackbar.show();
+                }
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                // view the background view
+            }
+        };
+
+// attaching the touch helper to recycler view
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+
+
+        //Handle item swipes. left and right.
+//        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+//            @Override
+//            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+//                return 0;
+//            }
+//
+//            @Override
+//            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
+//                return false;
+//            }
+//
+//            @Override
+//            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+//                if (direction == ItemTouchHelper.LEFT) {
+//                    mNotesViewModel.delete(mNotesAdapter.getGlycemiaAt(viewHolder.getAdapterPosition()));
+//                    mNotesAdapter.notifyDataSetChanged();
+//                    Snackbar mySnackbar = Snackbar.make(findViewById(R.id.main_activity),
+//                            R.string.deleted, Snackbar.LENGTH_SHORT);
+//                    mySnackbar.show();
+//                }
+//
+//            }
+//        }).attachToRecyclerView(mRecyclerView);
 
 
         // fab click listener (add new entry)
@@ -103,6 +161,7 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
     /**
      * When date is picked using calender dialog it will be passed to this callback.
      * date is formatted to the phone's local defaults.
+     *
      * @param view
      * @param year
      * @param month
@@ -122,14 +181,14 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
 
         SimpleDateFormat format = new SimpleDateFormat(Constants.date_format, Locale.getDefault());
         try {
-             current_date = format.parse(formatted_date_str);
+            current_date = format.parse(formatted_date_str);
             Handler handler = new Handler();
             handler.post(new Runnable() {
                 @Override
                 public void run() {
                     DialogFragment timePicker = new TimePickerFragment();
                     timePicker.show(getSupportFragmentManager(), "time picker");
-                    Log.d("handler", "inside handler: " );
+                    Log.d("handler", "inside handler: ");
                 }
             });
             Log.d("BATZZ ", current_date.toString());
@@ -140,7 +199,7 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
 
 //        Glycemia glycemia = new Glycemia(DateConverter.toDate(Long.valueOf(dateString)),1);
 //        mNotesViewModel.insetRecord(glycemia);
-       Log.d("BATZZ", formatted_date_str);
+        Log.d("BATZZ", formatted_date_str);
 
     }
 
@@ -163,7 +222,7 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
                 if (tv_glycemia.getText().toString() != "" && !tv_glycemia.getText().toString().isEmpty()) {
                     glycemia_ = tv_glycemia.getText().toString();
 
-                    if (tv_insuline.getText().toString() != "" ) {
+                    if (tv_insuline.getText().toString() != "") {
                         insulin_ = tv_insuline.getText().toString();
                     }
 
@@ -175,11 +234,11 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
                             public void run() {
                                 DialogFragment datePicker = new DatePickerFragment();
                                 datePicker.show(getSupportFragmentManager(), "date picker");
-                                Log.d("handler", "inside handler: " );
+                                Log.d("handler", "inside handler: ");
                             }
                         });
                     }
-                    Log.d("TAG", "FAB ONCLICK: " + glycemia_ + " "+ insulin_);
+                    Log.d("TAG", "FAB ONCLICK: " + glycemia_ + " " + insulin_);
                 }
                 dialog.cancel();
             }
@@ -192,9 +251,10 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
 
     /**
      * Callback for timeDialog. will be called upon user selecting time.
-     * @param view timeView
+     *
+     * @param view      timeView
      * @param hourOfDay selected hourOfDay by user
-     * @param minute selected minute by user
+     * @param minute    selected minute by user
      */
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -236,15 +296,12 @@ public class MainActivity extends BaseActivity implements DatePickerDialog.OnDat
     /**
      * send date/time, glycemia, and insulin to DB handlers for insertion
      */
-    private void sendDataToViewModel(){
+    private void sendDataToViewModel() {
         mNotesViewModel.prepareInsertGlycemia(glycemia_,
-        insulin_,
-        current_date,
-        formattedTime);
+                insulin_,
+                current_date,
+                formattedTime);
     }
-
-
-
 
 
 }

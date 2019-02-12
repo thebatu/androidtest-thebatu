@@ -1,5 +1,6 @@
 package com.notebook.mirambeaucare.notebook.database;
 
+import android.arch.lifecycle.LiveData;
 import android.util.Log;
 import com.notebook.mirambeaucare.notebook.network.LocalDataSource;
 import com.notebook.mirambeaucare.notebook.util.AppExecutors;
@@ -50,8 +51,15 @@ public class NotebookRepository {
      * return all records
      * @return list of all glycemia recordds
      */
-    public List<Glycemia> getAllRecord(){
+    public LiveData<List<Glycemia>> getAllRecord(){
         return glycemiaDao.getAllGlycemia();
     }
 
+    /**
+     * delete a record
+     * @param glycemiaAt a record
+     */
+    public void delete(Glycemia glycemiaAt) {
+        glycemiaDao.delete(glycemiaAt);
+    }
 }

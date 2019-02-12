@@ -47,6 +47,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesAdapter
         Glycemia glycemia = mGlycemiasList.get(position);
         holder.glycemiaLvl.setText(String.valueOf(glycemia.getGlycemia()));
         holder.insulinLvl.setText(String.valueOf(glycemia.getInsulin()));
+
         holder.date.setText(glycemia.getDate().toString());
     }
 
@@ -68,6 +69,16 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesAdapter
         mGlycemiasList = glycemias;
         notifyDataSetChanged();
     }
+
+    /**
+     * return a record in a certain position.
+     * @param position position passed by the swipe
+     * @return a record
+     */
+    public Glycemia getGlycemiaAt(int position){
+        return mGlycemiasList.get(position);
+    }
+
 
     /**
      * A ViewHolder is a required part of the pattern for RecyclerViews. It mostly behaves as

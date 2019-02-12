@@ -1,5 +1,6 @@
 package com.notebook.mirambeaucare.notebook.database;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -15,8 +16,8 @@ import java.util.List;
 @Dao
 public interface GlycemiaDao {
 
-    @Query("SELECT * FROM glycemia_table ")
-    List<Glycemia> getAllGlycemia();
+    @Query("SELECT * FROM glycemia_table  ORDER BY date DESC ")
+    LiveData<List<Glycemia>> getAllGlycemia();
 
     @Insert
     void insert(Glycemia glycemia);

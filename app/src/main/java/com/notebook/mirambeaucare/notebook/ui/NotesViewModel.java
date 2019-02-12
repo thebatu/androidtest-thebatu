@@ -1,5 +1,6 @@
 package com.notebook.mirambeaucare.notebook.ui;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.notebook.mirambeaucare.notebook.database.Glycemia;
@@ -40,6 +41,9 @@ public class NotesViewModel extends ViewModel {
      * @param formattedTime
      */
     public void prepareInsertGlycemia(String glycemia_, String insulin_, Date current_date, String formattedTime) {
+        if (insulin_.isEmpty()){
+            insulin_ = "0";
+        }
         Glycemia glycemia = new Glycemia(current_date, Float.parseFloat(insulin_), Float.parseFloat(glycemia_));
         insetRecord(glycemia);
     }
@@ -47,9 +51,16 @@ public class NotesViewModel extends ViewModel {
     /**
      * @return all records of glycemia
      */
-    public List<Glycemia> getAllRecords(){
+    public LiveData<List<Glycemia>> getAllRecords(){
        return  mNotebookRepository.getAllRecord();
     }
 
 
+    /**
+     * delete a record from local DB
+     * @param glycemiaAt
+     */
+    public void delete(Glycemia glycemiaAt) {
+        mNotebookRepository.delete(glycemiaAt);
+    }
 }
